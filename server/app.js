@@ -1,4 +1,4 @@
-var winston = require("winston"),
+const winston = require("winston"),
 	Container = require("wantsit").Container
 	Express = require("express"),
 	http = require("http"),
@@ -8,9 +8,14 @@ var winston = require("winston"),
 	EventEmitter = require("wildemitter"),
 	util = require("util"),
 	fs = require("fs"),
-	methodOverride = require('method-override');
+	methodOverride = require('method-override'),
+    logger = require('morgan'),
+    bodyParser = require('body-parser'),
+    multer = require('multer'),
+    errorHandler = require('errorhandler');
 
-var REQUIRED_PM2_VERSION = "0.11.0";
+
+const REQUIRED_PM2_VERSION = "0.11.0";
 
 PM2Web = function(options) {
 	EventEmitter.call(this);
@@ -19,21 +24,46 @@ PM2Web = function(options) {
 	this._container = new Container();
 
 	// set up logging
-	this._container.createAndRegister("logger", winston.Logger, {
-		transports: [
-			new (winston.transports.Console)({
-				timestamp: true,
-				colorize: true
-			})
-		]
-	});
+    const logger = winston.createLogger({
+        level: 'silly',
+        format: winston.format.json(),
+        defaultMeta: { service: 'service' },
+        transports: [
+            //
+            // - Write to all logs with level `info` and below to `combined.log`
+            // - Write all logs error (and below) to `error.log`.
+            //
+            // new winston.transports.File({ filename: 'error.log', level: 'error' }),
+            // new winston.transports.File({ filename: 'combined.log' }),
+            new winston.transports.Console({
+                format: winston.format.simple()
+            })
+        ]
+    });
+    //this._container.register("logger", logger);
+    	this._container.createAndRegister("logger", winston.createLogger, [{
+    		level: 'silly',
+    	//	format: winston.format.json(),
+    		//defaultMeta: { service: 'user-service' },
+    			transports: [
+    			//
+    			// - Write to all logs with level `info` and below to `combined.log`
+    			// - Write all logs error (and below) to `error.log`.
+    			//
+    			// new winston.transports.File({ filename: 'error.log', level: 'error' }),
+    			// new winston.transports.File({ filename: 'combined.log' }),
+    				new winston.transports.Console({
+    		//			format: winston.format.simple()
+    				})
+    			]
+    	}]);
 
 	// non-optional options
 	options = options || {};
 	options.requiredPm2Version = REQUIRED_PM2_VERSION;
 
 	// parse configuration
-	this._container.createAndRegister("config", require(__dirname + "/components/Configuration"), options);
+	this._container.createAndRegister("config", require(__dirname + "/components/Configuration"), [options]);
 
 	// web controllers
 	this._container.createAndRegister("homeController", require(__dirname + "/routes/Home"));
@@ -44,16 +74,16 @@ PM2Web = function(options) {
 
 	// create express
 	this._express = this._createExpress();
-
+	console.log(this._express.get("port"));
 	// http(s) server
 	this._server = this._createServer(this._express);
 
 	// web sockets
 	this._container.createAndRegister("webSocketResponder", require(__dirname + "/components/WebSocketResponder"));
- 	this._container.createAndRegister("webSocketServer", WebSocketServer, {
+	this._container.register("webSocketServer", new WebSocketServer({
 		server: this._server,
 		path: "/ws"
-	});
+	}));
 
 	// holds host data
 	this._container.createAndRegister("hostList", require(__dirname + "/components/ServerHostList"));
@@ -141,17 +171,20 @@ PM2Web.prototype._createExpress = function() {
 		express.use(Express.basicAuth(config.get("www:authentication:username"), config.get("www:authentication:password")));
 	}
 
-	express.use(Express.logger("dev"));
-	express.use(Express.urlencoded())
-	express.use(Express.json())
+	express.use(logger("dev"));
+	express.use(bodyParser.urlencoded({ extended: true }))
+	express.use(bodyParser.json())
+    express.use(multer)
 	express.use(methodOverride('X-HTTP-Method'));          // Microsoft
 	express.use(methodOverride('X-HTTP-Method-Override')); // Google/GData, default option
 	express.use(methodOverride('X-Method-Override'));      // IBM
-	express.use(express.router);
+	// express.use(express.router);
 	express.use(Express.static(__dirname + "/public"));
 
 	// development only
-	express.use(Express.errorHandler());
+    if (express.get('env') === 'development') {
+        express.use(errorHandler())
+    }
 
 	return express;
 }

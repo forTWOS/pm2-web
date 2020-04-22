@@ -1,5 +1,5 @@
 
-var PM2Web = require(__dirname + "/server/app");
+const PM2Web = require(__dirname + "/server/app");
 
-var pm2web = new PM2Web({});
+let pm2web = new PM2Web({});
 pm2web.start();

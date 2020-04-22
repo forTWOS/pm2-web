@@ -1,62 +1,46 @@
 {
-  "name": "pm2-web",
-  "version": "2.1.3",
-  "description": "A web based monitor for PM2",
-  "preferGlobal": "true",
+  "name": "pm2-web2",
+  "version": "1.0.0",
+  "description": "Since it's no longer possible to monitor `pm2` running on multiple machines I'm not really working on `pm2-web` any more.",
   "main": "pm2-web.js",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+    "cjson": "^0.5.0",
+    "errorhandler": "^1.5.1",
+    "express": "^4.17.1",
+    "jade": "^1.11.0",
+    "method-override": "^3.0.0",
+    "minimist": "^1.2.5",
+    "moment": "^2.24.0",
+    "morgan": "^1.10.0",
+    "multer": "^1.4.2",
+    "pm2-interface": "^2.0.4",
+    "pwuid": "^1.1.1",
+    "semver": "^7.3.2",
+    "wantsit": "^2.1.3",
+    "wildemitter": "^1.2.1",
+    "winston": "^3.2.1",
+    "ws": "^7.2.3"
+  },
+  "devDependencies": {},
   "scripts": {
-    "integration": "istanbul cover nodeunit test/integration",
-    "test": "istanbul cover nodeunit test/unit",
-    "coveralls": "istanbul cover nodeunit test/unit && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/achingbrain/pm2-web.git"
-  },
-  "dependencies": {
-    "express": "^3.4",
-    "jade": "^1.1",
-    "winston": "^0.7",
-    "underscore.string": "^2.3",
-    "wantsit": "^1.0",
-    "pm2-interface": "^2.0",
-    "ws": "^0.4",
-    "wildemitter": "^1.0",
-    "cjson": "^0.3",
-    "minimist": "^1.0",
-    "semver": "^3.0",
-    "pwuid": "^1.0",
-    "zepto-browserify": "^1.0",
-    "moment": "^2.5",
-    "mustache": "^0.8",
-    "ansi-html": "~0.0.4",
-    "html-entities": "^1.0",
-    "method-override": "^2.1.2"
-  },
-  "optionalDependencies": {
-    "mdns2": "^2.1.0"
-  },
-  "devDependencies": {
-    "grunt-browserify": "^2.0",
-    "grunt-contrib-watch": "^0.6",
-    "grunt-contrib-less": "^0.11",
-    "nodeunit": "^0.9",
-    "should": "^4.0",
-    "sinon": "^1.8",
-    "istanbul": "^0.3",
-    "coveralls": "^2.8",
-    "protractor": "^1.0",
-    "proxyquire": "^1.0",
-    "testsuite": "^1.0"
-  },
-  "bin": {
-    "pm2-web": "bin/pm2-web.sh"
+    "url": "git+https://github.com/forTWOS/pm2-web.git"
   },
   "keywords": [
-    "pm2",
-    "monitor",
-    "web",
-    "ui",
-    "process"
-  ]
+    "pm2-web",
+    "for",
+    "nodejs-10"
+  ],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/forTWOS/pm2-web/issues"
+  },
+  "homepage": "https://github.com/forTWOS/pm2-web#readme"
 }
