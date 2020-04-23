@@ -12,7 +12,8 @@ const winston = require("winston"),
     logger = require('morgan'),
     bodyParser = require('body-parser'),
     multer = require('multer'),
-    errorHandler = require('errorhandler');
+    errorHandler = require('errorhandler'),
+    serveStatic = require('serve-static');
 
 
 const REQUIRED_PM2_VERSION = "0.11.0";
@@ -74,7 +75,7 @@ PM2Web = function(options) {
 
 	// create express
 	this._express = this._createExpress();
-	console.log(this._express.get("port"));
+	
 	// http(s) server
 	this._server = this._createServer(this._express);
 
@@ -174,12 +175,13 @@ PM2Web.prototype._createExpress = function() {
 	express.use(logger("dev"));
 	express.use(bodyParser.urlencoded({ extended: true }))
 	express.use(bodyParser.json())
-    express.use(multer)
+	//express.use(multer)
 	express.use(methodOverride('X-HTTP-Method'));          // Microsoft
 	express.use(methodOverride('X-HTTP-Method-Override')); // Google/GData, default option
 	express.use(methodOverride('X-Method-Override'));      // IBM
 	// express.use(express.router);
-	express.use(Express.static(__dirname + "/public"));
+	express.use(serveStatic(path.join(__dirname, 'public')));console.log(path.join(__dirname, 'public'));
+	//express.use(Express.static(path.join(__dirname, "public")));
 
 	// development only
     if (express.get('env') === 'development') {
