@@ -1,6 +1,7 @@
 # Deprecation warning
 
 Since it's no longer possible to monitor `pm2` running on multiple machines I'm not really working on `pm2-web` any more.
+# for pm2^4.0.0
 
 For an alternative, check out [Guvnor](https://www.npmjs.com/package/guvnor) - a process manager with support for multiple hosts, unix based permissions, a far more capable web interface and more.
 
